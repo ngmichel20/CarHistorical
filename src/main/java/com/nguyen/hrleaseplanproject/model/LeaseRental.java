@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -22,20 +21,21 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "historical")
-public class Historical {
+public class LeaseRental {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "license_number")
-	private Car car;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_id")
+    private Car car;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employee_id")
-	private Employee employee;
+    @Temporal(TemporalType.DATE)
+    private Date startDateContract;
 
-	@Temporal(TemporalType.DATE)
-	private Date assignmentDate;
+    @Temporal(TemporalType.DATE)
+    private Date endDateContract;
+    
+    private String leaseCompany;
+
 }
