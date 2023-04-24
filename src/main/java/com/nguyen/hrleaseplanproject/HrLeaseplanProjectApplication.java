@@ -1,9 +1,13 @@
 package com.nguyen.hrleaseplanproject;
 
+import org.springframework.context.ApplicationContext;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.nguyen.hrleaseplanproject.service.ServiceMain;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,13 +34,19 @@ public class HrLeaseplanProjectApplication {
 //	            e.printStackTrace();
 //	        }
 //	    }
+	
+	
 
 	public static void main(String[] args) {
 
 		// readExcelFile(new File(filePath));
-
-		SpringApplication.run(HrLeaseplanProjectApplication.class, args);
-		readExcel();
+		org.springframework.context.ApplicationContext context = SpringApplication.run(HrLeaseplanProjectApplication.class, args);
+		ServiceMain serviceMain = context.getBean(ServiceMain.class);
+		serviceMain.readExcel();
+		
+		//SpringApplication.run(HrLeaseplanProjectApplication.class, args);
+		
+		//readExcel();
 
 	}
 
@@ -50,24 +60,53 @@ public class HrLeaseplanProjectApplication {
 			Workbook workbook = new XSSFWorkbook(inputStream);
 			Sheet sheet = workbook.getSheetAt(0);
 
-			for (Row row : sheet) {
-				for (Cell cell : row) {
+			int rowExcel = sheet.getLastRowNum(); // or sheet.getPhysicalNumberOfRows
+			int columnExcel = 20;
+			int[][] myArray = new int[rowExcel][columnExcel];
+
+			System.out.println(sheet.getLastRowNum());
+			for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+				Row row = sheet.getRow(rowIndex);
+				if (row == null) {
+					continue;
+				}
+
+//				for (Cell cell : row) {
+//					String cellValue = "";
+
+				int cells = row.getPhysicalNumberOfCells();
+				for (int c = 0; c < cells; c++) {
+					Cell cell = row.getCell(c);
+					if (cell == null) {
+						continue;
+					}
+					
+					
+					if(c==0) {
+						
+					}
+					
 					String cellValue = "";
 					switch (cell.getCellType()) {
 					case NUMERIC:
 						cellValue = String.valueOf(cell.getNumericCellValue());
+						System.out.print(" nunu ");
 						break;
 					case STRING:
 						cellValue = cell.getStringCellValue();
+						System.out.print(" stristri ");
 						break;
 					case BOOLEAN:
 						cellValue = String.valueOf(cell.getBooleanCellValue());
+						System.out.println("bobo");
 						break;
 					default:
 						break;
 
 					}
-					System.out.print(cellValue + "hallo \t");
+
+					System.out.print(cellValue + "\t");
+
 				}
 				System.out.println();
 			}
