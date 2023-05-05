@@ -1,19 +1,30 @@
 package com.nguyen.hrleaseplanproject;
 
-import org.springframework.context.ApplicationContext;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.nguyen.hrleaseplanproject.service.ServiceMain;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.nguyen.hrleaseplanproject.service.ServiceMain;
+
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.annotation.MultipartConfig;
+
 @SpringBootApplication
+//@MultipartConfig(maxFileSize = 500 * 1024 * 1024, maxRequestSize = 500 * 1024 * 1024)
+//@EntityScan("com.nguyen.hrleaseplanproject.model")
 public class HrLeaseplanProjectApplication {
 
 //	 public static void readExcelFile(File filePath) {
@@ -41,14 +52,54 @@ public class HrLeaseplanProjectApplication {
 
 		// readExcelFile(new File(filePath));
 		org.springframework.context.ApplicationContext context = SpringApplication.run(HrLeaseplanProjectApplication.class, args);
-		ServiceMain serviceMain = context.getBean(ServiceMain.class);
-		serviceMain.readExcel();
 		
+		
+		ServiceMain serviceMain = context.getBean(ServiceMain.class);
+		String filePath = "src/main/resources/hr-leaseplan.xlsx";
+		String filePath2 = "src/main/resources/hr-leaseplan-import-second.xlsx";
+		serviceMain.readExcel(filePath);
+//		System.out.println("AHERHERHERHER");
+//		serviceMain.readExcel(filePath2);
+		
+		//Uncomment this to launch without codes above
 		//SpringApplication.run(HrLeaseplanProjectApplication.class, args);
 		
 		//readExcel();
+		
+		//http://localhost:3000/ to 8080
+		//Cross Origin Requests
+		//Allow all requests only from http://localhost:3000/
+		
 
 	}
+	
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+					.allowedMethods("*")
+					.allowedOrigins("http://localhost:3000");
+			}
+		};
+	}
+	
+//	@Bean
+//	public MultipartConfigElement multipartConfigElement (){
+//        MultipartConfigFactory factory = new MultipartConfigFactory();
+//        factory.setMaxFileSize(DataSize.parse("10MB"));
+//        factory.setMaxRequestSize(DataSize.parse("10MB"));
+//        return factory.createMultipartConfig();
+//    }
+	
+	@Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize(DataSize.ofMegabytes(500));
+        factory.setMaxRequestSize(DataSize.ofMegabytes(500));
+        return factory.createMultipartConfig();
+    }
+	
 
 	private static void readExcel() {
 		String filePath = "src/main/resources/hr-leaseplan.xlsx";

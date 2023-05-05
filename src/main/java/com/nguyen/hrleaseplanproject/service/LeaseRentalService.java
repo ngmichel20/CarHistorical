@@ -35,4 +35,22 @@ public class LeaseRentalService {
 		leaseRental.setLeaseRental(leaseOrNot);
 		leaseRentalRepository.save(leaseRental);
 	}
+	
+//	public void saveLeaseRental(LocalDate startDateContract,
+//			LocalDate expectedEndDateContract, double contractDuration, double anualContractMileage,
+//			String leaseCompany, double leaseRateExclVatFuel, boolean leaseOrNot, 
+//			LocalDate startDateLeaseaCarDriver, double exceedance) {
+//
+//		LeaseRental leaseRental = new LeaseRental();
+//		leaseRental.setStartDateContract(startDateContract);
+//		leaseRental.setExpectedEndDateContract(expectedEndDateContract);
+//		leaseRental.setContractDuration(contractDuration);
+//		leaseRental.setAnualContractMileage(anualContractMileage);
+//		leaseRental.setLeaseCompany(leaseCompany);
+//		leaseRental.setLeaseRateExclVatFuel(leaseRateExclVatFuel);
+//		leaseRental.setStartDateLeaseCarDriver(startDateLeaseaCarDriver);
+//		leaseRental.setExceedance(exceedance);
+//		leaseRental.setLeaseRental(leaseOrNot);
+//		leaseRentalRepository.save(leaseRental);
+//	}
 }
