@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.nguyen.hrleaseplanproject.model.Car;
@@ -385,15 +386,33 @@ public class ServiceMain {
 					System.out.print("\t");
 
 				}
+				
+				//check si empid AND licenseNumber sont déjà dans la DB
+				//-> si empID existe deja mais licenseNumber a changé, alors l'ajouter
+				//-> si empID ET licenseNumber n'existent pas, alors l'ajouter
+				
+				
+				if (employeeService.addEmployeeAndHisCar(empId, cellLicenseNumber).isEmpty()) {
+					Employee employee = employeeService.saveEmployee(empId, splittedFullName[1], splittedFullName[0]);
 
-				Employee employee = employeeService.saveEmployee(empId, splittedFullName[1], splittedFullName[0]);
+					Car car = carService.saveCar(cellCarBrand, cellCarModel, cellCarType, cellLicenseNumber, cellTaxValue,
+							cellNedcCO2Emission, cellCO2Emission, cellFuel, dateFirstRegistration);
 
-				Car car = carService.saveCar(cellCarBrand, cellCarModel, cellCarType, cellLicenseNumber, cellTaxValue,
-						cellNedcCO2Emission, cellCO2Emission, cellFuel, dateFirstRegistration);
-
-				leaseRentalService.saveLeaseRental(car, employee, cellStartDateContract, cellExpectedEndDateContract,
-						cellContractDuration, cellAnualContractMileage, cellLeaseCompany, cellLeaseRateExclVatFuel,
-						cellLeaseOrNot, cellStartDateLeaseCarDriver, cellExceedance);
+					leaseRentalService.saveLeaseRental(car, employee, cellStartDateContract, cellExpectedEndDateContract,
+							cellContractDuration, cellAnualContractMileage, cellLeaseCompany, cellLeaseRateExclVatFuel,
+							cellLeaseOrNot, cellStartDateLeaseCarDriver, cellExceedance);
+				}
+				
+				
+				
+//				Employee employee = employeeService.saveEmployee(empId, splittedFullName[1], splittedFullName[0]);
+//
+//				Car car = carService.saveCar(cellCarBrand, cellCarModel, cellCarType, cellLicenseNumber, cellTaxValue,
+//						cellNedcCO2Emission, cellCO2Emission, cellFuel, dateFirstRegistration);
+//
+//				leaseRentalService.saveLeaseRental(car, employee, cellStartDateContract, cellExpectedEndDateContract,
+//						cellContractDuration, cellAnualContractMileage, cellLeaseCompany, cellLeaseRateExclVatFuel,
+//						cellLeaseOrNot, cellStartDateLeaseCarDriver, cellExceedance);
 
 				System.out.println();
 			}
@@ -403,6 +422,10 @@ public class ServiceMain {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public Page<Object[]> findAllEmployees(int page, int size){
+		return this.employeeService.findAllEmployees(page, size);
 	}
 
 	private LocalDate dateExtractor(Row row, int c) {

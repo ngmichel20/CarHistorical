@@ -18,7 +18,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 			+ "ON car.car_id=lease_rental.car_id "
 			+ "JOIN employee "
 			+ "ON employee.employee_id=lease_rental.employee_id "
-			+ "WHERE lease_rental.employee_id= ?1" , nativeQuery = true)
+			+ "WHERE lease_rental.employee_id= ?1 "
+			+ "ORDER BY lease_rental.start_date_lease_car_driver DESC" , nativeQuery = true)
     public List<Object[]> findCarsByEmployeeId(Long employeeId);
     
 }

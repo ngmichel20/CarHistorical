@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import com.nguyen.hrleaseplanproject.model.Employee;
 import com.nguyen.hrleaseplanproject.repository.CarRepository;
 import com.nguyen.hrleaseplanproject.repository.EmployeeRepository;
 import com.nguyen.hrleaseplanproject.service.ServiceMain;
+
+
 
 @RestController
 public class EmployeeController {
@@ -65,21 +68,35 @@ public class EmployeeController {
 		return carRepository.findCarsByEmployeeId(employeeId);
 	}
 
-	@PostMapping(path="/import-excel")
+	@PostMapping(path = "/import-excel")
 	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
 		try {
-            // Check if the uploaded file is an Excel file
-            if (!file.getOriginalFilename().endsWith(".xlsx")) {
-                return ResponseEntity.badRequest().body("Uploaded file is not an Excel file");
-            }
+			// Check if the uploaded file is an Excel file
+			if (!file.getOriginalFilename().endsWith(".xlsx")) {
+				return ResponseEntity.badRequest().body("Uploaded file is not an Excel file");
+			}
 
-            // Process the Excel file and store data in database
-            serviceMain.readExcelFromUpload(file.getInputStream());
+			// Process the Excel file and store data in database
+			serviceMain.readExcelFromUpload(file.getInputStream());
 
-            return ResponseEntity.ok().body("File uploaded and processed successfully");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process file");
-        }
+			return ResponseEntity.ok().body("File uploaded and processed successfully");
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process file");
+		}
+	}
+
+//	@GetMapping("/overview")
+//	public List<Object[]> getAllEmployees() {
+//		return employeeRepository.findAllEmployees();
+//	}
+	
+	@GetMapping("/overview")
+	public ResponseEntity<Page<Object[]>> getAllEmployees(@RequestParam (defaultValue = "0") int page, 
+										  @RequestParam(defaultValue = "5") int size) {
+		
+		Page<Object[]> pageAllEmployees = serviceMain.findAllEmployees(page, size);
+		
+		return ResponseEntity.ok(pageAllEmployees);
 	}
 
 //	@GetMapping(path="/{id}")

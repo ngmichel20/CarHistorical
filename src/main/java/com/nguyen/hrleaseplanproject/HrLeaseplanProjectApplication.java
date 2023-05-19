@@ -77,9 +77,10 @@ public class HrLeaseplanProjectApplication {
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-					.allowedMethods("*")
-					.allowedOrigins("http://localhost:3000");
+				registry.addMapping("/**") //allows all requests from all url's
+					.allowedMethods("*") //with any of the requests methods
+					.allowedOrigins("http://localhost:4200");//from this specific origin //Angular
+				//  .allowedOrigins("http://localhost:5000");//For React uncomment here
 			}
 		};
 	}
